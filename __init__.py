@@ -68,12 +68,7 @@ def _save_window_image(scale: int) -> None:
     :param scale: the scaling factor for the image
     """
 
-    app = QApplication.instance()
-    main_window = None
-
-    for w in app.topLevelWidgets():
-        if isinstance(w, QMainWindow):
-            main_window = w
+    main_window = QApplication.activeWindow()
 
     # Save an image of the main window if found
     if main_window is not None:

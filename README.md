@@ -2,6 +2,8 @@
 
 Screenshot Ninja makes it easy to capture screenshots of Binary Ninja!
 
+![Banner](banner.png)
+
 ## Features
 
 Screenshot Ninja currently allows you to capture screenshots:

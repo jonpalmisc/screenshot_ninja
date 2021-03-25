@@ -9,6 +9,9 @@ from PySide6.QtGui import QPixmap, QRegion
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
 
 
+# -- HELPERS -------------------------------------------------------------------
+
+
 def scaled_size(r: QRect, scale: int) -> QSize:
     """
     Get the scaled size of a QRect.
@@ -26,7 +29,7 @@ def scaled_size(r: QRect, scale: int) -> QSize:
     return s.size()
 
 
-def _save_widget_image(w: QWidget, scale: int) -> None:
+def save_widget_image(w: QWidget, scale: int) -> None:
     """
     Save an image of the given widget.
 
@@ -59,7 +62,10 @@ def _save_widget_image(w: QWidget, scale: int) -> None:
             MessageBoxButtonSet.OKButtonSet,
             MessageBoxIcon.ErrorIcon,
         )
-    
+
+
+# -- COMMAND IMPLEMENTATIONS ---------------------------------------------------
+
 
 def _save_window_image(scale: int) -> None:
     """
@@ -72,7 +78,7 @@ def _save_window_image(scale: int) -> None:
 
     # Save an image of the main window if found
     if main_window is not None:
-        _save_widget_image(main_window, scale)
+        save_widget_image(main_window, scale)
     else:
         show_message_box(
             "Error",
@@ -96,7 +102,10 @@ def _save_view_image(scale: int) -> None:
     vf_widget = vf.getCurrentWidget()
 
     # Save an image of the active view
-    _save_widget_image(vf_widget, scale)
+    save_widget_image(vf_widget, scale)
+
+
+# -- COMMAND SHORTHANDS --------------------------------------------------------
 
 
 def save_view_image_x1(_bv: BinaryView) -> None:
@@ -146,6 +155,8 @@ def save_window_image_custom(_bv: BinaryView) -> None:
     if scale is not None:
         _save_window_image(scale)
 
+
+# -- COMMAND REGISTRATION ------------------------------------------------------
 
 PluginCommand.register(
     "Screenshot Ninja \\ Save view image @ 1x...",

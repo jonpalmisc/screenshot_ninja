@@ -14,7 +14,7 @@
     "Linux": "No special instructions.",
     "Windows": "No special instructions."
   },
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "Jon Palmisciano",
   "minimumbinaryninjaversion": 1200
 }

@@ -4,9 +4,16 @@ from typing import Optional
 from binaryninja import *
 from binaryninjaui import DockHandler
 
-from PySide6.QtCore import QPoint, QRect, QSize
-from PySide6.QtGui import QPixmap, QRegion
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
+import binaryninjaui
+
+if "qt_major_version" in dir(binaryninjaui) and binaryninjaui.qt_major_version == 6:
+    from PySide6.QtCore import QPoint, QRect, QSize
+    from PySide6.QtGui import QPixmap, QRegion
+    from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
+else:
+    from PySide2.QtCore import QPoint, QRect, QSize
+    from PySide2.QtGui import QPixmap, QRegion
+    from PySide2.QtWidgets import QApplication, QMainWindow, QWidget
 
 
 # -- HELPERS -------------------------------------------------------------------

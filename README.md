@@ -13,7 +13,7 @@ Screenshot Ninja currently allows you to capture screenshots:
 ## Install
 
 Screenshot Ninja is not yet in the official plugin repository, so for now clone
-this repository into your user plugins folder.
+this repository or download a release and place it in your user plugins folder.
 
 ## Usage
 

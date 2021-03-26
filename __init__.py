@@ -1,4 +1,5 @@
 import time
+from typing import Optional
 
 from binaryninja import (
     BinaryView,
@@ -44,11 +45,31 @@ def scaled_size(r: QRect, scale: int) -> QSize:
     return s.size()
 
 
-def save_widget_image(w: QWidget, scale: int) -> None:
+def _get_save_path() -> Optional[str]:
+    """
+    Prompt the user for a save path via the UI. Will return None if the user
+    cancels the operation.
+    """
+
+    # Use "binaryninja-" + the current Unix time as the default filename
+    default_filename = f"binaryninja-{int(time.time())}.png"
+
+    # Ask for the user's preferred output path; if the output path is None, then
+    # the user has cancelled the operation
+    path = get_save_filename_input("Save Screenshot", "png", default_filename)
+
+    # Convert path from bytes to string if one was supplied
+    if path is not None:
+        path = path.decode("ascii")
+
+    return path
+
+
+def save_widget_image(w: QWidget, scale: int, dest: str) -> None:
     """
     Save an image of the given widget.
 
-    :param scale: the scaling factor for the image
+    :param scale: the DPI-scaling factor to render the image at
     """
 
     r = w.rect()
@@ -58,18 +79,9 @@ def save_widget_image(w: QWidget, scale: int) -> None:
     img.setDevicePixelRatio(scale)
     w.render(img, QPoint(), QRegion(r))
 
-    # Use "binaryninja-" + the current Unix time as the default filename
-    default_filename = f"binaryninja-{int(time.time())}.png"
-
-    # Ask for the user's preferred output path; if the output path is None, then
-    # the user has cancelled the operation
-    save_path = get_save_filename_input("Save Screenshot", "png", default_filename)
-    if save_path is None:
-        return
-
     # Attempt to save the screenshot and show an error message if unsuccessful
-    if img.save(save_path.decode("ascii")):
-        print(f"Screenshot saved to {save_path.decode('ascii')} successfully.")
+    if img.save(dest):
+        print(f"Screenshot saved to {dest} successfully.")
     else:
         show_message_box(
             "Error",
@@ -82,18 +94,19 @@ def save_widget_image(w: QWidget, scale: int) -> None:
 # -- COMMAND IMPLEMENTATIONS ---------------------------------------------------
 
 
-def save_active_window_image(scale: int) -> None:
+def save_active_window_image(scale: int, dest: str) -> None:
     """
     Save an image of the main window.
 
     :param scale: the DPI-scaling factor to render the image at
+    :param dest: where to save the image
     """
 
     main_window = QApplication.activeWindow()
 
     # Save an image of the main window if found
     if main_window is not None:
-        save_widget_image(main_window, scale)
+        save_widget_image(main_window, scale, dest)
     else:
         show_message_box(
             "Error",
@@ -103,11 +116,12 @@ def save_active_window_image(scale: int) -> None:
         )
 
 
-def save_active_view_image(scale: int) -> None:
+def save_active_view_image(scale: int, dest: str) -> None:
     """
     Save an image of the currently active linear/graph view.
 
     :param scale: the DPI-scaling factor to render the image at
+    :param dest: where to save the image
     """
 
     dh = DockHandler.getActiveDockHandler()
@@ -117,58 +131,37 @@ def save_active_view_image(scale: int) -> None:
     vf_widget = vf.getCurrentWidget()
 
     # Save an image of the active view
-    save_widget_image(vf_widget, scale)
+    save_widget_image(vf_widget, scale, dest)
 
 
 # -- COMMAND SHORTHANDS --------------------------------------------------------
 
 
-def _ui_save_view_image_1x(_bv: BinaryView) -> None:
-    """Shorthand function to save a screenshot at 1x resolution."""
-
-    save_active_view_image(1)
-
-
-def _ui_save_view_image_2x(_bv: BinaryView) -> None:
-    """Shorthand function to save a screenshot at 2x resolution."""
-
-    save_active_view_image(2)
-
-
-def _ui_save_view_image_custom(_bv: BinaryView) -> None:
-    """Prompts the user for a resolution multiplier, then saves a screenshot."""
-
-    scale = get_int_input("Resolution multiplier:", "Screenshot Ninja")
-
-    if scale is not None:
-        save_active_view_image(scale)
-
-
-def _ui_save_window_image_1x(_bv: BinaryView) -> None:
+def _ui_save_image(_bv: BinaryView, window: bool, scale: Optional[int] = None) -> None:
     """
-    Shorthand function to save a screenshot of the main window at 1x resolution.
+    UI helper to save an image. If no scale is provided, the user will be
+    prompted with a popup.
+
+    :param window: whether the whole window (or just view) should be captured
+    :param scale: the DPI-scaling factor to render the image at
     """
 
-    save_active_window_image(1)
+    # Try to ask the user for the scale, will be None if canceled
+    if scale is None:
+        scale = get_int_input("Resolution multiplier:", "Screenshot Ninja")
+        if scale is None:
+            return
 
+    # Try to ask the user for a save location, will be None if canceled
+    path = _get_save_path()
+    if path is None:
+        return
 
-def _ui_save_window_image_2x(_bv: BinaryView) -> None:
-    """
-    Shorthand function to save a screenshot of the main window at 2x resolution.
-    """
-
-    save_active_window_image(2)
-
-
-def _ui_save_window_image_custom(_bv: BinaryView) -> None:
-    """
-    Shorthand to save a screenshot of the main window at a custom resolution.
-    """
-
-    scale = get_int_input("Resolution multiplier:", "Screenshot Ninja")
-
-    if scale is not None:
-        save_active_window_image(scale)
+    # Save the actual screenshot
+    if window:
+        save_active_window_image(scale, path)
+    else:
+        save_active_view_image(scale, path)
 
 
 # -- COMMAND REGISTRATION ------------------------------------------------------
@@ -176,35 +169,35 @@ def _ui_save_window_image_custom(_bv: BinaryView) -> None:
 PluginCommand.register(
     "Screenshot Ninja \\ Save view image @ 1x...",
     "Save an image of the currently visible linear/graph view at 1x scaling",
-    _ui_save_view_image_1x,
+    lambda bv: _ui_save_image(bv, False, 1),
 )
 
 PluginCommand.register(
     "Screenshot Ninja \\ Save view image @ 2x...",
     "Save an image of the currently visible linear/graph view at 2x scaling",
-    _ui_save_view_image_2x,
+    lambda bv: _ui_save_image(bv, False, 2),
 )
 
 PluginCommand.register(
     "Screenshot Ninja \\ Save view image...",
     "Save an image of the currently visible linear/graph view at custom scaling",
-    _ui_save_view_image_custom,
+    lambda bv: _ui_save_image(bv, False),
 )
 
 PluginCommand.register(
     "Screenshot Ninja \\ Save window image @ 1x...",
     "Save an image of the main window at 1x scaling",
-    _ui_save_window_image_1x,
+    lambda bv: _ui_save_image(bv, True, 1),
 )
 
 PluginCommand.register(
     "Screenshot Ninja \\ Save window image @ 2x...",
     "Save an image of the main window at 2x scaling",
-    _ui_save_window_image_2x,
+    lambda bv: _ui_save_image(bv, True, 2),
 )
 
 PluginCommand.register(
     "Screenshot Ninja \\ Save window image...",
     "Save an image of the main window at custom scaling",
-    _ui_save_window_image_custom,
+    lambda bv: _ui_save_image(bv, True),
 )

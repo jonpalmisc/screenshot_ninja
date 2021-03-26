@@ -1,7 +1,15 @@
 import time
-from typing import Optional
 
-from binaryninja import *
+from binaryninja import (
+    BinaryView,
+    MessageBoxButtonSet,
+    MessageBoxIcon,
+    PluginCommand,
+    get_int_input,
+    get_save_filename_input,
+    show_message_box,
+)
+
 from binaryninjaui import DockHandler
 
 import binaryninjaui
@@ -9,11 +17,11 @@ import binaryninjaui
 if "qt_major_version" in dir(binaryninjaui) and binaryninjaui.qt_major_version == 6:
     from PySide6.QtCore import QPoint, QRect, QSize
     from PySide6.QtGui import QPixmap, QRegion
-    from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
+    from PySide6.QtWidgets import QApplication, QWidget
 else:
     from PySide2.QtCore import QPoint, QRect, QSize
     from PySide2.QtGui import QPixmap, QRegion
-    from PySide2.QtWidgets import QApplication, QMainWindow, QWidget
+    from PySide2.QtWidgets import QApplication, QWidget
 
 
 # -- HELPERS -------------------------------------------------------------------

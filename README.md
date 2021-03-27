@@ -16,8 +16,16 @@ Screenshot Ninja currently allows you to capture screenshots:
 
 ## Install
 
-Screenshot Ninja is not yet in the official plugin repository, so for now clone
-this repository or download a release and place it in your user plugins folder.
+You can get Screenshot Ninja by:
+
+- installing it through Binary Ninja's plugin manager;
+- cloning this repository into your user plugins folder; or
+- downloading and extracting a release into your user plugins folder.
+
+If you plan to use the scripting functionality, the latter two options are
+recommended, as the plugin manager adjusts module names.
+
+Screenshot Ninja has no additional dependencies.
 
 ## Usage
 

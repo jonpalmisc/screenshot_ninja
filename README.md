@@ -2,7 +2,7 @@
 
 Screenshot Ninja makes it easy to capture screenshots of Binary Ninja!
 
-![Banner](banner.png)
+![Banner](https://raw.githubusercontent.com/jonpalmisc/screenshot_ninja/master/banner.png)
 
 > The pictured theme is [Reflection](https://github.com/jonpalmisc/bn-reflection-theme).
 

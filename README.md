@@ -21,10 +21,28 @@ this repository or download a release and place it in your user plugins folder.
 
 ## Usage
 
+Screenshot Ninja can be used from the context menu or command palette, as well
+as from the console as a Python module.
+
+### From the user interface
+
 Use the context menu or command palette to find Screenshot Ninja's commands. The
 "save view image" command family will save an image of the active linear/graph
 view, while the "save window image" command family will save an image of the
 entire Binary Ninja window.
+
+### As a Python module
+
+You can import Screenshot Ninja in the Python console like this:
+
+``` python
+import screenshot_ninja
+```
+
+You can then use the `get_active_view_image` and `get_active_window_image`
+functions as you wish. Both functions return a `QPixmap`, which you are
+responsible for saving yourself. Additionally, both functions will throw a
+`ValueError` if something goes wrong, so be sure to catch it.
 
 ## License
 

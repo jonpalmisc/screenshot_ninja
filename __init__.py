@@ -28,7 +28,7 @@ else:
 # -- HELPERS -------------------------------------------------------------------
 
 
-def scaled_size(r: QRect, scale: int) -> QSize:
+def _scaled_size(r: QRect, scale: int) -> QSize:
     """
     Get the scaled size of a QRect.
 
@@ -65,7 +65,7 @@ def _get_save_path() -> Optional[str]:
     return path
 
 
-def get_widget_image(w: QWidget, scale: int) -> QPixmap:
+def get_widget_image(w: QWidget, scale: float) -> QPixmap:
     """
     Get an image (QPixmap) of the given widget. Does not save the image to
     disk; the caller is responsible for saving the image.
@@ -76,7 +76,7 @@ def get_widget_image(w: QWidget, scale: int) -> QPixmap:
     r = w.rect()
 
     # Create a QPixmap and render the view widget to it
-    img = QPixmap(scaled_size(r, scale))
+    img = QPixmap(_scaled_size(r, scale))
     img.setDevicePixelRatio(scale)
     w.render(img, QPoint(), QRegion(r))
 
@@ -86,7 +86,7 @@ def get_widget_image(w: QWidget, scale: int) -> QPixmap:
 # -- COMMAND IMPLEMENTATIONS ---------------------------------------------------
 
 
-def get_active_window_image(scale: int) -> QPixmap:
+def get_active_window_image(scale: float) -> QPixmap:
     """
     Get an image of the main window. Will raise a ValueError if the active
     window could not be found.
@@ -102,7 +102,7 @@ def get_active_window_image(scale: int) -> QPixmap:
     return get_widget_image(main_window, scale)
 
 
-def get_active_view_image(scale: int) -> QPixmap:
+def get_active_view_image(scale: float) -> QPixmap:
     """
     Get an image of the currently active linear/graph view. Will raise a
     ValueError if the active view could not be found.

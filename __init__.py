@@ -65,9 +65,10 @@ def _get_save_path() -> Optional[str]:
     return path
 
 
-def save_widget_image(w: QWidget, scale: int, dest: str) -> None:
+def get_widget_image(w: QWidget, scale: int) -> QPixmap:
     """
-    Save an image of the given widget.
+    Get an image (QPixmap) of the given widget. Does not save the image to
+    disk; the caller is responsible for saving the image.
 
     :param scale: the DPI-scaling factor to render the image at
     """
@@ -79,59 +80,46 @@ def save_widget_image(w: QWidget, scale: int, dest: str) -> None:
     img.setDevicePixelRatio(scale)
     w.render(img, QPoint(), QRegion(r))
 
-    # Attempt to save the screenshot and show an error message if unsuccessful
-    if img.save(dest):
-        print(f"Screenshot saved to {dest} successfully.")
-    else:
-        show_message_box(
-            "Error",
-            "Failed to save screenshot.",
-            MessageBoxButtonSet.OKButtonSet,
-            MessageBoxIcon.ErrorIcon,
-        )
+    return img
 
 
 # -- COMMAND IMPLEMENTATIONS ---------------------------------------------------
 
 
-def save_active_window_image(scale: int, dest: str) -> None:
+def get_active_window_image(scale: int) -> QPixmap:
     """
-    Save an image of the main window.
+    Get an image of the main window. Will raise a ValueError if the active
+    window could not be found.
 
     :param scale: the DPI-scaling factor to render the image at
-    :param dest: where to save the image
     """
 
     main_window = QApplication.activeWindow()
 
-    # Save an image of the main window if found
-    if main_window is not None:
-        save_widget_image(main_window, scale, dest)
-    else:
-        show_message_box(
-            "Error",
-            "Couldn't find main window.",
-            MessageBoxButtonSet.OKButtonSet,
-            MessageBoxIcon.ErrorIcon,
-        )
+    if main_window is None:
+        raise ValueError("Could not find active window.")
+
+    return get_widget_image(main_window, scale)
 
 
-def save_active_view_image(scale: int, dest: str) -> None:
+def get_active_view_image(scale: int) -> QPixmap:
     """
-    Save an image of the currently active linear/graph view.
+    Get an image of the currently active linear/graph view. Will raise a
+    ValueError if the active view could not be found.
 
     :param scale: the DPI-scaling factor to render the image at
-    :param dest: where to save the image
     """
 
     dh = DockHandler.getActiveDockHandler()
 
     # Get the current ViewFrame and the underlying widget
     vf = dh.getViewFrame()
-    vf_widget = vf.getCurrentWidget()
+    view = vf.getCurrentWidget()
 
-    # Save an image of the active view
-    save_widget_image(vf_widget, scale, dest)
+    if view is None:
+        raise ValueError("Could not find active view.")
+
+    return get_widget_image(view, scale)
 
 
 # -- COMMAND SHORTHANDS --------------------------------------------------------
@@ -152,16 +140,32 @@ def _ui_save_image(_bv: BinaryView, window: bool, scale: Optional[int] = None) -
         if scale is None:
             return
 
+    # Get the screenshot. You would think this would be called after the user
+    # chooses a save location, but that messes up Qt's ability to determine the
+    # active window, so...
+    try:
+        img = get_active_window_image(scale) if window else get_active_view_image(scale)
+    except ValueError as e:
+        show_message_box(
+            "Error",
+            str(e),
+            MessageBoxButtonSet.OKButtonSet,
+            MessageBoxIcon.ErrorIcon,
+        )
+
     # Try to ask the user for a save location, will be None if canceled
     path = _get_save_path()
     if path is None:
         return
 
-    # Save the actual screenshot
-    if window:
-        save_active_window_image(scale, path)
-    else:
-        save_active_view_image(scale, path)
+    # Try to save the image, will return False if unsuccessful
+    if not img.save(path):
+        show_message_box(
+            "Error",
+            "Failed to save image.",
+            MessageBoxButtonSet.OKButtonSet,
+            MessageBoxIcon.ErrorIcon,
+        )
 
 
 # -- COMMAND REGISTRATION ------------------------------------------------------

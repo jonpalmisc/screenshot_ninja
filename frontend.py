@@ -27,10 +27,6 @@ def _get_save_path() -> Optional[str]:
     # the user has cancelled the operation
     path = get_save_filename_input("Save Screenshot", "png", default_filename)
 
-    # Convert path from bytes to string if one was supplied
-    if path is not None:
-        path = path.decode("ascii")
-
     return path
 
 

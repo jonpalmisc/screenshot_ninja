@@ -79,37 +79,37 @@ def _ui_save_image(_bv: BinaryView, window: bool, scale: Optional[int] = None) -
 
 def register() -> None:
     PluginCommand.register(
-        "Screenshot Ninja \\ Save view image @ 1x...",
+        "Screenshot Ninja \\ Capture view image @ 1x...",
         "Save an image of the currently visible linear/graph view at 1x scaling",
         lambda bv: _ui_save_image(bv, False, 1),
     )
 
     PluginCommand.register(
-        "Screenshot Ninja \\ Save view image @ 2x...",
+        "Screenshot Ninja \\ Capture view image @ 2x...",
         "Save an image of the currently visible linear/graph view at 2x scaling",
         lambda bv: _ui_save_image(bv, False, 2),
     )
 
     PluginCommand.register(
-        "Screenshot Ninja \\ Save view image...",
+        "Screenshot Ninja \\ Capture view image...",
         "Save an image of the currently visible linear/graph view at custom scaling",
         lambda bv: _ui_save_image(bv, False),
     )
 
     PluginCommand.register(
-        "Screenshot Ninja \\ Save window image @ 1x...",
+        "Screenshot Ninja \\ Capture window image @ 1x...",
         "Save an image of the main window at 1x scaling",
         lambda bv: _ui_save_image(bv, True, 1),
     )
 
     PluginCommand.register(
-        "Screenshot Ninja \\ Save window image @ 2x...",
+        "Screenshot Ninja \\ Capture window image @ 2x...",
         "Save an image of the main window at 2x scaling",
         lambda bv: _ui_save_image(bv, True, 2),
     )
 
     PluginCommand.register(
-        "Screenshot Ninja \\ Save window image...",
+        "Screenshot Ninja \\ Capture window image...",
         "Save an image of the main window at custom scaling",
         lambda bv: _ui_save_image(bv, True),
     )

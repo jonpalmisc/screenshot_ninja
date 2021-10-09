@@ -1,10 +1,8 @@
 # Screenshot Ninja
 
-Screenshot Ninja makes it easy to capture screenshots of Binary Ninja!
+Screenshot Ninja makes it easy to capture screenshots inside Binary Ninja.
 
 ![Banner](https://raw.githubusercontent.com/jonpalmisc/screenshot_ninja/master/banner.png)
-
-> The pictured theme is [Reflection](https://github.com/jonpalmisc/bn-reflection-theme).
 
 ## Features
 
@@ -24,8 +22,6 @@ You can get Screenshot Ninja by:
 
 If you plan to use the scripting functionality, the latter two options are
 recommended, as the plugin manager adjusts module names.
-
-Screenshot Ninja has no additional dependencies.
 
 ## Usage
 

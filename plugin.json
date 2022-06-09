@@ -2,7 +2,7 @@
   "pluginmetadataversion": 2,
   "name": "Screenshot Ninja",
   "description": "Easily capture Binary Ninja screenshots in ultra-high resolution",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "author": "jonpalmisc",
   "type": ["helper"],
   "platforms": ["Darwin", "Linux", "Windows"],

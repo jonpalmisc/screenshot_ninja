@@ -1,17 +1,11 @@
-import binaryninjaui
 from binaryninjaui import DockHandler
 
-if "qt_major_version" in dir(binaryninjaui) and binaryninjaui.qt_major_version == 6:
-    from PySide6.QtCore import QPoint, QRect, QSize
-    from PySide6.QtGui import QPixmap, QRegion
-    from PySide6.QtWidgets import QApplication, QWidget
-else:
-    from PySide2.QtCore import QPoint, QRect, QSize
-    from PySide2.QtGui import QPixmap, QRegion
-    from PySide2.QtWidgets import QApplication, QWidget
+from PySide6.QtCore import QPoint, QRect, QSize
+from PySide6.QtGui import QPixmap, QRegion, QImage
+from PySide6.QtWidgets import QApplication, QWidget
 
 
-def _scaled_size(r: QRect, scale: int) -> QSize:
+def _scaledSize(r: QRect, scale: int) -> QSize:
     """
     Get the scaled size of a QRect.
 
@@ -28,7 +22,7 @@ def _scaled_size(r: QRect, scale: int) -> QSize:
     return s.size()
 
 
-def get_widget_image(w: QWidget, scale: float) -> QPixmap:
+def renderWidgetImage(widget: QWidget, scale: float) -> QPixmap:
     """
     Get an image (QPixmap) of the given widget. Does not save the image to
     disk; the caller is responsible for saving the image.
@@ -36,20 +30,16 @@ def get_widget_image(w: QWidget, scale: float) -> QPixmap:
     :param scale: the DPI-scaling factor to render the image at
     """
 
-    r = w.rect()
+    rect = widget.rect()
 
-    # Create a QPixmap and render the view widget to it
-    img = QPixmap(_scaled_size(r, scale))
+    img = QPixmap(_scaledSize(rect, scale))
     img.setDevicePixelRatio(scale)
-    w.render(img, QPoint(), QRegion(r))
+    widget.render(img, QPoint(), QRegion(rect))
 
     return img
 
 
-# -- COMMAND IMPLEMENTATIONS ---------------------------------------------------
-
-
-def get_active_window_image(scale: float) -> QPixmap:
+def renderActiveWindow(scale: float) -> QPixmap:
     """
     Get an image of the main window. Will raise a ValueError if the active
     window could not be found.
@@ -57,15 +47,13 @@ def get_active_window_image(scale: float) -> QPixmap:
     :param scale: the DPI-scaling factor to render the image at
     """
 
-    main_window = QApplication.activeWindow()
-
-    if main_window is None:
+    if (main_window := QApplication.activeWindow()) is None:
         raise ValueError("Could not find active window.")
 
-    return get_widget_image(main_window, scale)
+    return renderWidgetImage(main_window, scale)
 
 
-def get_active_view_image(scale: float) -> QPixmap:
+def renderActiveView(scale: float) -> QPixmap:
     """
     Get an image of the currently active linear/graph view. Will raise a
     ValueError if the active view could not be found.
@@ -73,13 +61,13 @@ def get_active_view_image(scale: float) -> QPixmap:
     :param scale: the DPI-scaling factor to render the image at
     """
 
-    dh = DockHandler.getActiveDockHandler()
-
-    # Get the current ViewFrame and the underlying widget
-    vf = dh.getViewFrame()
-    view = vf.getCurrentWidget()
-
-    if view is None:
+    dock_handler = DockHandler.getActiveDockHandler()
+    view_frame = dock_handler.getViewFrame()
+    if (view := view_frame.getCurrentWidget()) is None:
         raise ValueError("Could not find active view.")
 
-    return get_widget_image(view, scale)
+    return renderWidgetImage(view, scale)
+
+
+def copyToClipboard(image: QImage) -> None:
+    QApplication.clipboard().setImage(image)

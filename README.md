@@ -2,8 +2,6 @@
 
 Screenshot Ninja makes it easy to capture screenshots inside Binary Ninja.
 
-![Banner](https://raw.githubusercontent.com/jonpalmisc/screenshot_ninja/master/banner.png)
-
 ## Features
 
 Screenshot Ninja currently allows you to capture screenshots:
@@ -43,12 +41,12 @@ You can import Screenshot Ninja in the Python console like this:
 import screenshot_ninja
 ```
 
-You can then use the `get_active_view_image` and `get_active_window_image`
-functions as you wish. Both functions return a `QPixmap`, which you are
-responsible for saving yourself. Additionally, both functions will throw a
-`ValueError` if something goes wrong, so be sure to catch it.
+You can then use the `renderActiveView` and `renderActiveWindow` functions as
+you wish. Both functions return a `QPixmap`, which you are responsible for
+saving yourself. Additionally, both functions will throw a `ValueError` if
+something goes wrong, so be sure to catch it.
 
 ## License
 
-Copyright 2021 Jon Palmisciano. Licensed under the MIT License. For additional
-information, see [LICENSE.txt](LICENSE.txt).
+Copyright 2021-2023 Jon Palmisciano. Licensed under the MIT License. For
+additional information, see [LICENSE.txt](LICENSE.txt).

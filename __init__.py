@@ -1,6 +1,6 @@
-from .core import get_active_view_image, get_active_window_image
+from .core import *
 from . import frontend
 
-__all__ = ["get_active_view_image", "get_active_window_image"]
+__all__ = ["renderActiveView", "renderActiveWindow"]
 
 frontend.register()

@@ -47,10 +47,10 @@ def renderActiveWindow(scale: float) -> QPixmap:
     :param scale: the DPI-scaling factor to render the image at
     """
 
-    if (main_window := QApplication.activeWindow()) is None:
+    if (mainWindow := QApplication.activeWindow()) is None:
         raise ValueError("Could not find active window.")
 
-    return renderWidgetImage(main_window, scale)
+    return renderWidgetImage(mainWindow, scale)
 
 
 def renderActiveView(scale: float) -> QPixmap:
@@ -61,9 +61,14 @@ def renderActiveView(scale: float) -> QPixmap:
     :param scale: the DPI-scaling factor to render the image at
     """
 
-    dock_handler = DockHandler.getActiveDockHandler()
-    view_frame = dock_handler.getViewFrame()
-    if (view := view_frame.getCurrentWidget()) is None:
+    dockHandler = DockHandler.getActiveDockHandler()
+    if viewFrame := dockHandler.getViewFrame():
+        if (view := viewFrame.getCurrentWidget()) is None:
+            raise ValueError("Could not find active view via dock handler.")
+    elif activeWindow := QApplication.activeWindow():
+        if (view := activeWindow.childAt(QPoint(150, 150))) is None:
+            raise ValueError("Could not find active view via heuristics.")
+    else:
         raise ValueError("Could not find active view.")
 
     return renderWidgetImage(view, scale)

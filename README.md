@@ -48,5 +48,5 @@ something goes wrong, so be sure to catch it.
 
 ## License
 
-Copyright 2021-2023 Jon Palmisciano. Licensed under the MIT License. For
+Copyright &copy; 2021-2023 Jon Palmisciano. Licensed under the MIT License. For
 additional information, see [LICENSE.txt](LICENSE.txt).

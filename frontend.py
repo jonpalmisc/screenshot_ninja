@@ -29,7 +29,7 @@ def _uiSaveImage(
     _bv: BinaryView,
     window: bool,
     scale: Optional[int] = None,
-    useClipboard: bool = True,
+    useClipboard: bool = False,
 ) -> None:
     """
     UI helper to save an image. If no scale is provided, the user will be

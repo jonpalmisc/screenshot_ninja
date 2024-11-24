@@ -5,7 +5,7 @@ from PySide6.QtGui import QPixmap, QRegion, QImage
 from PySide6.QtWidgets import QApplication, QWidget
 
 
-def _scaledSize(r: QRect, scale: int) -> QSize:
+def _scaledSize(r: QRect, scale: float) -> QSize:
     """
     Get the scaled size of a QRect.
 

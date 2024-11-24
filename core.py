@@ -1,4 +1,4 @@
-from binaryninjaui import DockHandler
+from binaryninjaui import UIContext
 
 from PySide6.QtCore import QPoint, QRect, QSize
 from PySide6.QtGui import QPixmap, QRegion, QImage
@@ -61,10 +61,10 @@ def renderActiveView(scale: float) -> QPixmap:
     :param scale: the DPI-scaling factor to render the image at
     """
 
-    dockHandler = DockHandler.getActiveDockHandler()
-    if viewFrame := dockHandler.getViewFrame():
+    uiContext = UIContext.activeContext()
+    if uiContext and (viewFrame := uiContext.getCurrentViewFrame()):
         if (view := viewFrame.getCurrentWidget()) is None:
-            raise ValueError("Could not find active view via dock handler.")
+            raise ValueError("Could not find active view via ui context.")
     elif activeWindow := QApplication.activeWindow():
         if (view := activeWindow.childAt(QPoint(150, 150))) is None:
             raise ValueError("Could not find active view via heuristics.")
